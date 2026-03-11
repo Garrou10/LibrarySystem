@@ -1,0 +1,45 @@
+﻿@page "/add-member"
+@rendermode InteractiveServer
+@using LibrarySystem.Core
+@inject IMemberRepository MemberRepo
+@inject NavigationManager NavManager
+
+<PageTitle>Registrera medlem</PageTitle>
+
+<h1>➕ Registrera ny medlem</h1>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <EditForm Model="@newMember" OnValidSubmit="HandleSubmit" FormName="addMemberForm">
+
+            <div class="mb-3">
+                <label class="form-label">Förnamn</label>
+                <InputText class="form-control" @bind-Value="newMember.FirstName" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Efternamn</label>
+                <InputText class="form-control" @bind-Value="newMember.LastName" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">E-post</label>
+                <InputText class="form-control" @bind-Value="newMember.Email" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Spara medlem</button>
+            <a href="/members" class="btn btn-secondary">Avbryt</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Member newMember { get; set; } = new Member();
+
+    private async Task HandleSubmit()
+    {
+        await MemberRepo.AddAsync(newMember);
+        NavManager.NavigateTo("/members");
+    }
+}

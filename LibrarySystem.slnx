@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="LibrarySystem.Core/LibrarySystem.Core.csproj" />
+  <Project Path="LibrarySystem.Data/LibrarySystem.Data.csproj" />
+  <Project Path="LibrarySystem.Tests/LibrarySystem.Tests.csproj" />
+  <Project Path="LibrarySystem.Web/LibrarySystem.Web.csproj" />
+  <Project Path="LibrarySystem/LibrarySystem.csproj" />
+</Solution>

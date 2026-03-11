@@ -1,0 +1,91 @@
+﻿@page "/loans"
+@rendermode InteractiveServer
+@using LibrarySystem.Core
+@using LibrarySystem.Data
+@inject LoanRepository LoanRepo
+@inject IBookRepository BookRepo
+@inject IMemberRepository MemberRepo
+
+<PageTitle>Utlåning</PageTitle>
+
+<h1>📦 Hantera Utlåning</h1>
+
+<div class="card p-4 mb-4 bg-light">
+    <h4>Registrera nytt lån</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Välj Bok</label>
+            <select class="form-select" @bind="selectedBookId">
+                <option value="0">-- Välj bok --</option>
+                @foreach (var b in availableBooks)
+                {
+                    <option value="@b.Id">@b.Title</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label>Välj Medlem</label>
+            <select class="form-select" @bind="selectedMemberId">
+                <option value="0">-- Välj medlem --</option>
+                @foreach (var m in members)
+                {
+                    <option value="@m.Id">@m.FirstName @m.LastName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100" @onclick="RegisterLoan">Skapa Lån</button>
+        </div>
+    </div>
+</div>
+
+<h3>Aktiva lån</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Bok</th>
+            <th>Lånad av</th>
+            <th>Datum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var loan in activeLoans)
+        {
+            <tr>
+                <td>@loan.Book.Title</td>
+                <td>@loan.Member.FirstName @loan.Member.LastName</td>
+                <td>@loan.LoanDate.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private int selectedBookId;
+    private int selectedMemberId;
+    private List<Book> availableBooks = new();
+    private List<Member> members = new();
+    private List<Loan> activeLoans = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var allBooks = await BookRepo.GetAllAsync();
+        availableBooks = allBooks.Where(b => b.IsAvailable).ToList();
+        members = (await MemberRepo.GetAllAsync()).ToList();
+        activeLoans = (await LoanRepo.GetActiveLoansAsync()).ToList();
+    }
+
+    private async Task RegisterLoan()
+    {
+        if (selectedBookId > 0 && selectedMemberId > 0)
+        {
+            await LoanRepo.CreateLoanAsync(selectedBookId, selectedMemberId);
+            await LoadData(); 
+        }
+    }
+}

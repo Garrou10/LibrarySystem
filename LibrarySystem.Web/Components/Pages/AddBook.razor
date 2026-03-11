@@ -1,0 +1,52 @@
+﻿@page "/add-book"
+@rendermode InteractiveServer
+@using LibrarySystem.Core
+@inject IBookRepository BookRepo
+@inject NavigationManager NavManager
+
+<PageTitle>Lägg till bok</PageTitle>
+
+<h1>➕ Lägg till ny bok</h1>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        @*  *@
+        <EditForm Model="@newBook" OnValidSubmit="HandleSubmit" FormName="addBookForm">
+
+            <div class="mb-3">
+                <label class="form-label">ISBN</label>
+                <InputText class="form-control" @bind-Value="newBook.ISBN" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Titel</label>
+                <InputText class="form-control" @bind-Value="newBook.Title" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Författare</label>
+                <InputText class="form-control" @bind-Value="newBook.Author" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Utgivningsår</label>
+                <InputNumber class="form-control" @bind-Value="newBook.PublishedYear" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Spara bok</button>
+            <a href="/books" class="btn btn-secondary">Avbryt</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    
+    [SupplyParameterFromForm]
+    private Book newBook { get; set; } = new Book();
+
+    private async Task HandleSubmit()
+    {
+        await BookRepo.AddAsync(newBook);
+        NavManager.NavigateTo("/books");
+    }
+}   

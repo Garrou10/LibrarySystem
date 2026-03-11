@@ -1,0 +1,56 @@
+﻿@page "/"
+@using LibrarySystem.Core
+@inject IBookRepository BookRepo
+@inject IMemberRepository MemberRepo
+
+<PageTitle>Hem - Bibliotekssystem</PageTitle>
+
+<div class="container mt-4">
+    <div class="jumbotron p-5 mb-4 bg-light rounded-3 border">
+        <h1 class="display-5 fw-bold">Välkommen till Biblioteket 📚</h1>
+        <p class="col-md-8 fs-4">Här kan du hantera böcker, medlemmar och utlåningar på ett smidigt sätt.</p>
+    </div>
+
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Totalt antal böcker</h5>
+                    <p class="display-6 fw-bold">@totalBooks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Tillgängliga just nu</h5>
+                    <p class="display-6 fw-bold">@availableBooks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info">Registrerade medlemmar</h5>
+                    <p class="display-6 fw-bold">@totalMembers</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int totalBooks;
+    private int availableBooks;
+    private int totalMembers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var books = await BookRepo.GetAllAsync();
+        var members = await MemberRepo.GetAllAsync();
+
+        totalBooks = books.Count();
+        availableBooks = books.Count(b => b.IsAvailable);
+        totalMembers = members.Count();
+    }
+}

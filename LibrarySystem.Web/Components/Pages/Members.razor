@@ -1,0 +1,106 @@
+﻿@page "/members"
+@using LibrarySystem.Core
+@inject IMemberRepository MemberRepo
+@rendermode InteractiveServer
+
+<PageTitle>Medlemmar</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>👥 Bibliotekets Medlemmar</h1>
+    <a href="/add-member" class="btn btn-success">➕ Registrera ny medlem</a>
+</div>
+
+@if (members == null)
+{
+    <p><em>Laddar medlemmar...</em></p>
+}
+else if (!members.Any())
+{
+    <div class="alert alert-info">Inga medlemmar hittades.</div>
+}
+else
+{
+    <table class="table table-striped table-hover mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Förnamn</th>
+                <th>Efternamn</th>
+                <th>E-post</th>
+                <th>Åtgärder</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var member in members)
+            {
+                <tr>
+                    <td>
+                        @if (editingMemberId == member.Id)
+                        {
+                            <input type="text" @bind="member.FirstName" class="form-control form-control-sm" />
+                        }
+                        else
+                        {
+                            @member.FirstName
+                        }
+                    </td>
+                    <td>
+                        @if (editingMemberId == member.Id)
+                        {
+                            <input type="text" @bind="member.LastName" class="form-control form-control-sm" />
+                        }
+                        else
+                        {
+                            @member.LastName
+                        }
+                    </td>
+                    <td>@member.Email</td>
+                    <td>
+                        @if (editingMemberId == member.Id)
+                        {
+                            <button class="btn btn-primary btn-sm me-1" @onclick="() => SaveMember(member)">Spara</button>
+                            <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">Avbryt</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-warning btn-sm" @onclick="() => StartEdit(member.Id)">Redigera</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Member>? members;
+    private int? editingMemberId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMembers();
+    }
+
+    private async Task LoadMembers()
+    {
+        var data = await MemberRepo.GetAllAsync();
+        members = data.ToList();
+    }
+
+    private void StartEdit(int id)
+    {
+        editingMemberId = id;
+        StateHasChanged();
+    }
+
+    private void CancelEdit()
+    {
+        editingMemberId = null;
+    }
+
+    private async Task SaveMember(Member member)
+    {
+        await MemberRepo.UpdateAsync(member);
+        editingMemberId = null;
+        await LoadMembers();
+    }
+}
