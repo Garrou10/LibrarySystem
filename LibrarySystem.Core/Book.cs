@@ -21,6 +21,6 @@ public class Book
     public int PublishedYear { get; set; }
 
     public bool IsAvailable { get; set; } = true;
-    // EF Core använder detta för att koppla lån till rätt bok
+    
     public ICollection<Loan> Loans { get; set; } = new List<Loan>();
 }
