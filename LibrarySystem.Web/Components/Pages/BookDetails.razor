@@ -1,0 +1,53 @@
+﻿@page "/book/{Id:int}"
+@using LibrarySystem.Core
+@inject IBookRepository BookRepo
+
+<PageTitle>Bokdetaljer</PageTitle>
+
+@if (book == null)
+{
+    <p><em>Laddar bokdetaljer...</em></p>
+}
+else
+{
+    <div class="card mt-4" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">@book.Title</h3>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Författare: @book.Author</h5>
+            <h6 class="card-subtitle mb-3 text-muted">Utgivningsår: @book.PublishedYear</h6>
+            
+            <p class="card-text">
+                <strong>ISBN:</strong> @book.ISBN <br />
+                <strong>Status:</strong>
+                @if (book.IsAvailable)
+                {
+                    <span class="badge bg-success">🟢 Tillgänglig</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">🔴 Utlånad</span>
+                }
+            </p>
+        </div>
+        <div class="card-footer">
+            <a href="/books" class="btn btn-secondary">⬅ Tillbaka till listan</a>
+        </div>
+    </div>
+}
+
+@code {
+    
+    [Parameter]
+    public int Id { get; set; }
+
+    
+    private Book? book;
+
+    protected override async Task OnInitializedAsync()
+    {
+      
+        book = await BookRepo.GetByIdAsync(Id);
+    }
+}

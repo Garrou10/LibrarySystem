@@ -65,17 +65,20 @@ else
                             <span class="badge bg-danger">🔴 Utlånad</span>
                         }
                     </td>
-                    <td>
-                        @if (editingBookId == book.Id)
-                        {
-                            <button class="btn btn-primary btn-sm me-1" @onclick="() => SaveBook(book)">Spara</button>
-                            <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">Avbryt</button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-warning btn-sm" @onclick="() => StartEdit(book.Id)">Redigera</button>
-                        }
-                    </td>
+                    
+                        <td>
+                            @if (editingBookId == book.Id)
+                            {
+                                <button class="btn btn-primary btn-sm me-1" @onclick="() => SaveBook(book)">Spara</button>
+                                <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">Avbryt</button>
+                            }
+                            else
+                            {
+                                <a href="/book/@book.Id" class="btn btn-info btn-sm me-1 text-white">Detaljer</a>
+                            
+                                <button class="btn btn-warning btn-sm" @onclick="() => StartEdit(book.Id)">Redigera</button>
+                            }
+                        </td>
                 </tr>
             }
         </tbody>
